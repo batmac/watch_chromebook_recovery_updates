@@ -34,9 +34,10 @@ my %data = map { split( "=", $_, 2)} @data;
 my $rdata={};
 $rdata = lock_retrieve  $stored_file if (-r $stored_file);
 
-lock_nstore \%data, $stored_file;
 
 exit if ($data{version} eq $rdata->{version});
+
+lock_nstore \%data, $stored_file;
 
 say "*** OLD ***";
 say Dumper($rdata);
