@@ -5,7 +5,6 @@ use warnings;
 use v5.10;
 use Data::Dumper;
 use HTTP::Tiny;
-use File::Slurp;
 use Storable qw(lock_store lock_nstore lock_retrieve);
 
 ## conf
@@ -18,10 +17,9 @@ my $stored_file = $file.".stored";
 my $res = HTTP::Tiny->new->mirror($url,$file) or die $!;
 die "error ".$res->{status}." ".$res->{reason} unless ($res->{success});
 
-my @content = read_file($file) or die $!;
 my @data;
-
-for (@content){
+open FH, "<", $file or die $!;  
+while (<FH>){
 	#print if /$model/ .. /^$/;
 	chomp;
 	push @data,$_ if /$model/ .. /^$/;
