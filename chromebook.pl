@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use v5.10;
 use Data::Dumper;
-use LWP::Simple;
+use HTTP::Tiny;
 use File::Slurp;
 use Storable qw(lock_store lock_nstore lock_retrieve);
 
@@ -15,9 +15,8 @@ my $file = '/tmp/recovery.conf';
 my $stored_file = $file.".stored";
 ##
 
-my $code = mirror($url,$file) or die $!;
-die "erreur $code ".status_message($code) if ($code ne 200 and $code ne 304);
-#say "$code ".status_message($code);
+my $res = HTTP::Tiny->new->mirror($url,$file) or die $!;
+die "error ".$res->{status}." ".$res->{reason} unless ($res->{success});
 
 my @content = read_file($file) or die $!;
 my @data;
